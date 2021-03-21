@@ -1,21 +1,49 @@
 #include<stdio.h>
 #include<GL/glut.h>
 #include"./lib/displayIntro.h"
-#include"./lib/drawLine.h"
 #include"./lib/drawText.h"
+#include"./lib/drawShape.h"
+#include"./lib/mytypes.h"
+
+int viewNumber = 1;
+void displaySolarSystem(){
+    glClearColor(0.0,0.0,0.0,0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor4f(1,0,0,0);
+    drawRectangle(100,100,200,200);
+    
+}
 
 //gets triggered when the window is resized
 void setView(int w,int h){
     glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0, w, 0, h);
+	glOrtho(0, w, 0, h,0,1000);
+}
+
+//get triggered when mouse click event occurs
+//x, y –> coordinates of the mouse relative to upper left corner of window
+void mouseHandler(int buttonClick,int state,int x,int y){
+    extern Button button;
+    if(state == GLUT_DOWN && buttonClick == GLUT_LEFT_BUTTON){
+        y = abs(y-glutGet(GLUT_WINDOW_HEIGHT));
+        if((x >= button.buttonx0) &&  (y >= button.buttony0) && (x <= button.buttonx1) && (y <= button.buttony1)){
+            glColor4f(1,0,0,0);
+            drawPoint(x,y,5);
+            viewNumber++;
+            displaySolarSystem(); 
+        }
+    }
 }
 
 void display(){
     glClearColor(0.0,0.0,0.0,0.0);
     glClear(GL_COLOR_BUFFER_BIT);
-    displayIntro();
+    if(viewNumber == 1)
+        displayIntro();
+    else
+        displaySolarSystem();
     glFlush();   
 }
 
@@ -26,7 +54,8 @@ void init(int *argc,char **argv){
     glutInitWindowPosition(0,0);
     glutCreateWindow("Solar System");
     glutReshapeFunc(setView);
-    glutDisplayFunc(display);   
+    glutDisplayFunc(display);
+    glutMouseFunc(mouseHandler);
 }
 
 int main(int argc,char **argv){

@@ -1,10 +1,24 @@
 #include <GL/glut.h>
 #include "./drawText.h"
 #include "./drawShape.h"
+#include"mytypes.h"
+Button button;
 
+void drawButton(){
+    void *bodyFont = GLUT_BITMAP_HELVETICA_18;
+    int buttonx0 = button.buttonx0=(glutGet(GLUT_WINDOW_WIDTH)-200);
+    int buttony0 = button.buttony0=50;
+    int buttonx1 = button.buttonx1=abs(glutGet(GLUT_WINDOW_WIDTH)-100);
+    int buttony1 = button.buttony1=100;
+    char buttonText[] = "Next ->";
+    glColor3f(0.5,0.5, 0.5);
+    drawRectangle(buttonx0,buttony0,buttonx1,buttony1);
+    glColor4f(0,0,0,1);
+    drawText((buttonx0 + buttonx1)/2 - 30,(buttony0 -10 + buttony1)/2, buttonText, bodyFont);
+}
 
 void displayIntro()
-{
+{   
     int windowWidth = glutGet(GLUT_WINDOW_WIDTH);
     int windowHeigth = glutGet(GLUT_WINDOW_HEIGHT);
     void *titleFont = GLUT_BITMAP_TIMES_ROMAN_24;
@@ -49,4 +63,8 @@ void displayIntro()
         yCoordinate -= 40;
         xCoordinate = initialXCoordinate;
     }
+
+    //draw button
+    drawButton();
+
 }

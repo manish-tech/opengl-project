@@ -1,7 +1,7 @@
 #-*- MakeFile -*-
 
 output: main.o displayIntro.o drawText.o drawShape.o
-	gcc -o output main.o displayIntro.o drawText.o drawLine.o drawPoint.o -lGL -lGLU -lglut
+	gcc -o output main.o displayIntro.o drawText.o drawShape.o -lGL -lGLU -lglut
 
 main.o: ./main.c 
 	gcc -c ./main.c -lGL -lGLU -lglut
