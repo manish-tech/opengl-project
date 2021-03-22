@@ -28,7 +28,7 @@ void displayIntro()
     char name[2][50] = {"MANISH J BANGERA", "MANISH R BEKAL"};
 
     //draw points
-
+    glColor4f(1.0, 1.0, 1.0, 1.0);
     for (int i = 0; i < windowWidth; i++)
     {   
         int x = rand() % windowWidth;
@@ -66,5 +66,6 @@ void displayIntro()
 
     //draw button
     drawButton();
+    
 
 }

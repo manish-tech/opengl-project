@@ -8,9 +8,10 @@
 int viewNumber = 1;
 void displaySolarSystem(){
     glClearColor(0.0,0.0,0.0,0.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glColor4f(1,0,0,0);
-    drawRectangle(100,100,200,200);
+    glClear(GL_COLOR_BUFFER_BIT); 
+    glFlush();
+
+
     
 }
 
@@ -24,14 +25,14 @@ void setView(int w,int h){
 
 //get triggered when mouse click event occurs
 //x, y –> coordinates of the mouse relative to upper left corner of window
-void mouseHandler(int buttonClick,int state,int x,int y){
+void buttonHandler(int buttonClick,int state,int x,int y){
     extern Button button;
     if(state == GLUT_DOWN && buttonClick == GLUT_LEFT_BUTTON){
         y = abs(y-glutGet(GLUT_WINDOW_HEIGHT));
         if((x >= button.buttonx0) &&  (y >= button.buttony0) && (x <= button.buttonx1) && (y <= button.buttony1)){
             glColor4f(1,0,0,0);
-            drawPoint(x,y,5);
             viewNumber++;
+            glutMouseFunc(NULL);
             displaySolarSystem(); 
         }
     }
@@ -55,7 +56,7 @@ void init(int *argc,char **argv){
     glutCreateWindow("Solar System");
     glutReshapeFunc(setView);
     glutDisplayFunc(display);
-    glutMouseFunc(mouseHandler);
+    glutMouseFunc(buttonHandler);
 }
 
 int main(int argc,char **argv){

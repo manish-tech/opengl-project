@@ -12,7 +12,6 @@ void drawPoint(GLfloat x, GLfloat y ,GLfloat pointSize)
 {   
     glPointSize(pointSize);
     glBegin(GL_POINTS);
-        glColor4f(1.0, 1.0, 1.0, 1.0);
         glVertex2f(x, y);
     glEnd();
     glFlush();
