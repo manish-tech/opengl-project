@@ -4,23 +4,35 @@
 #include"./lib/drawText.h"
 #include"./lib/drawShape.h"
 #include"./lib/mytypes.h"
+#include "./lib/displaySolarSystem.h"
 
 int viewNumber = 1;
-void displaySolarSystem(){
-    glClearColor(0.0,0.0,0.0,0.0);
-    glClear(GL_COLOR_BUFFER_BIT); 
-    glFlush();
-
-
-    
-}
 
 //gets triggered when the window is resized
+void idle(void)
+{   if(viewNumber > 1){
+        extern GLfloat zRotated,xRotated;
+        xRotated += 0.015;
+        //yRotated += 0.01;
+        yRotated += 0.015; 
+        display();
+    }
+}
+
 void setView(int w,int h){
-    glViewport(0, 0, w, h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, w, 0, h,0,1000);
+    if(viewNumber == 1){
+        glViewport(0, 0, w, h);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, w, 0, h,0,1000);
+    }
+    else{
+        glMatrixMode(GL_PROJECTION);  
+        glLoadIdentity(); 
+        gluPerspective(39.0,(GLdouble)w/(GLdouble)h,0.8,21.0);
+        glMatrixMode(GL_MODELVIEW);
+        glViewport(0,0,w,h);  //Use the whole window for rendering
+    }
 }
 
 //get triggered when mouse click event occurs
@@ -33,6 +45,13 @@ void buttonHandler(int buttonClick,int state,int x,int y){
             glColor4f(1,0,0,0);
             viewNumber++;
             glutMouseFunc(NULL);
+            glMatrixMode(GL_PROJECTION);  
+            glLoadIdentity(); 
+            x = glutGet(GLUT_WINDOW_WIDTH);
+            y = glutGet(GLUT_WINDOW_HEIGHT);
+            gluPerspective(39.0,(GLdouble)x/(GLdouble)y,0.6,21.0);
+            glMatrixMode(GL_MODELVIEW);
+            glViewport(0,0,x,y); 
             displaySolarSystem(); 
         }
     }
@@ -56,6 +75,7 @@ void init(int *argc,char **argv){
     glutCreateWindow("Solar System");
     glutReshapeFunc(setView);
     glutDisplayFunc(display);
+    glutIdleFunc(idle);
     glutMouseFunc(buttonHandler);
 }
 
