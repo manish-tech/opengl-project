@@ -2,14 +2,35 @@
 #include<GL/glut.h>
 #include"./drawShape.h"
 #include<math.h>
-
+#include"mytypes.h"
 //total angle factor
 const int num = 20000;
 
-float planetsCoordinates[8][201];
+Celestialbodies coordinates[10] = {
+  {0,0,20,100},
+  {0,0,30,150},
+  {0,0,30,210},
+  {0,0,25,280},
+  {0,0,50,365},
+  {0,0,40,440},
+  {0,0,30,520},
+  {0,0,30,600},
+  {0,0,20,680},
+  {0,0,75,0}
+};
+
+Celestialbodies *infoOfBodies = coordinates;
+
+float planetsCoordinates[10][201];
 int planetsAngleFactor[9] = {0,num/2,0,num/2,0,num/2,0,num/2,0};
 int planetsSpeedFactor[9] = {18,14,13,11,9,8,7,6,5};
 int noOfPlanets = 9;
+
+float equationOfCircle(float centerx,float centery,float x,float y,float radius){
+  return ((x - centerx)*(x - centerx)) + ((y - centery)*(y - centery)) - radius*radius;
+}
+
+
 
 void drawHollowCircle(GLfloat x, GLfloat y, GLfloat radius){
 	int i;
@@ -47,6 +68,11 @@ void drawFilledCircle(GLfloat x, GLfloat y, GLfloat radius){
 		}
 	glEnd();
     glFlush();
+}
+
+void drawSun(GLfloat x, GLfloat y, GLfloat radius){
+  glColor4f(1, 0, 0, 1);
+  drawFilledCircle(x,y,radius);
 }
 
 void drawMercury(GLfloat x, GLfloat y, GLfloat radius){
@@ -91,8 +117,8 @@ void drawPluto(GLfloat x, GLfloat y, GLfloat radius){
 
 //displaySolarSystem is rerendered when current ui is idle,this function is called again inside idle function in main.c
 void displaySolarSystem(){
+
   glClear(GL_COLOR_BUFFER_BIT);
-  
   int windowWidth = glutGet(GLUT_WINDOW_WIDTH);
   int windowHeigth = glutGet(GLUT_WINDOW_HEIGHT);
   glColor4f(0.8f, 0.8f, 0.8f, 1.0f);
@@ -101,26 +127,31 @@ void displaySolarSystem(){
   //orbits
   drawHollowCircle(0,0,100);
   drawHollowCircle(0,0,150);
-  drawHollowCircle(0,0,200);
-  drawHollowCircle(0,0,250);
-  drawHollowCircle(0,0,300);
-  drawHollowCircle(0,0,350);
-  drawHollowCircle(0,0,400);
-  drawHollowCircle(0,0,450);
-  drawHollowCircle(0,0,500);
+  drawHollowCircle(0,0,210);
+  drawHollowCircle(0,0,280);
+  drawHollowCircle(0,0,365);
+  drawHollowCircle(0,0,440);
+  drawHollowCircle(0,0,520);
+  drawHollowCircle(0,0,600);
+  drawHollowCircle(0,0,680);
 
   //sun
-  glColor4f(1, 0, 0, 1);
-  drawFilledCircle(0,0,75);
-  drawMercury(100*cos((2*3.14*planetsAngleFactor[0])/num),100*sin((2*3.14*planetsAngleFactor[0])/num),20); 
-  drawVenus(150*cos((2*3.14*planetsAngleFactor[1])/num),150*sin((2*3.14*planetsAngleFactor[1])/num),30); 
-  drawEarth(200*cos((2*3.14*planetsAngleFactor[2])/num),200*sin((2*3.14*planetsAngleFactor[2])/num),30); 
-  drawMars(250*cos((2*3.14*planetsAngleFactor[3])/num),250*sin((2*3.14*planetsAngleFactor[3])/num),25); 
-  drawJupitor(300*cos((2*3.14*planetsAngleFactor[4])/num),300*sin((2*3.14*planetsAngleFactor[4])/num),50); 
-  drawSaturn(350*cos((2*3.14*planetsAngleFactor[5])/num),350*sin((2*3.14*planetsAngleFactor[5])/num),40); 
-  drawUranus(400*cos((2*3.14*planetsAngleFactor[6])/num),400*sin((2*3.14*planetsAngleFactor[6])/num),30);
-  drawNeptune(450*cos((2*3.14*planetsAngleFactor[7])/num),450*sin((2*3.14*planetsAngleFactor[7])/num),30);
-  drawPluto(500*cos((2*3.14*planetsAngleFactor[8])/num),500*sin((2*3.14*planetsAngleFactor[8])/num),20);
+  drawSun(0,0,75);
+
+for(int i = 0 ; i < 9 ; i++){
+  coordinates[i].x = coordinates[i].distanceFromCenterOfWindowTocenterOfCircle*cos((2*3.14*planetsAngleFactor[i])/num);
+  coordinates[i].y = coordinates[i].distanceFromCenterOfWindowTocenterOfCircle*sin((2*3.14*planetsAngleFactor[i])/num);
+}
+
+  drawMercury(coordinates[0].x,coordinates[0].y,coordinates[0].radius); 
+  drawVenus(coordinates[1].x,coordinates[1].y,coordinates[1].radius); 
+  drawEarth(coordinates[2].x,coordinates[2].y,coordinates[2].radius); 
+  drawMars(coordinates[3].x,coordinates[3].y,coordinates[3].radius); 
+  drawJupitor(coordinates[4].x,coordinates[4].y,coordinates[4].radius); 
+  drawSaturn(coordinates[5].x,coordinates[5].y,coordinates[5].radius); 
+  drawUranus(coordinates[6].x,coordinates[6].y,coordinates[6].radius);
+  drawNeptune(coordinates[7].x,coordinates[7].y,coordinates[7].radius);
+  drawPluto(coordinates[8].x,coordinates[8].y,coordinates[8].radius);
   
   for(int i = 0;i<noOfPlanets;i++){
     planetsAngleFactor[i] = (planetsAngleFactor[i] + planetsSpeedFactor[i])%(num+1);

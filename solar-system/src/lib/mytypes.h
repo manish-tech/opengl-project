@@ -5,3 +5,11 @@ struct Button{
     int buttony1 ;  
 };
 typedef struct Button Button;
+
+struct Celestialbodies{
+    float x;
+    float y;
+    float radius;
+    float distanceFromCenterOfWindowTocenterOfCircle;
+};
+typedef struct Celestialbodies Celestialbodies;

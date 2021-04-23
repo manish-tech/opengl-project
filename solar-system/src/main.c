@@ -24,8 +24,46 @@ void setView(int w,int h){
     }
 }
 
+void changeViewNumber(unsigned char key,int x,int y){
+    if(key == 'p')
+        viewNumber++;
+}
+
 //gets triggered when mouse click event occurs
 //x, y –> coordinates of the mouse relative to upper left corner of window
+
+
+void handleCelestialBodiesClick(int buttonClick,int state,int x,int y){
+    int width = glutGet(GLUT_WINDOW_WIDTH)/2;
+    int height = glutGet(GLUT_WINDOW_HEIGHT)/2;
+    extern Celestialbodies *infoOfBodies;
+     if(state == GLUT_DOWN && buttonClick == GLUT_LEFT_BUTTON){
+        int newX = 0,newY = 0;
+        if(width - x > 0)
+            newX = -1*(width - x);
+
+        else if(width - x < 0)
+            newX = -1*(width - x);
+
+        else if(width - x == 0)
+            newX = 0;
+
+        if(height - y > 0)
+            newY = height - y;
+
+        else if(height - y < 0)
+            newY = height - y;
+        else if(height - y == 0)
+            newY = 0;
+
+        for(int i = 0 ; i < 8 ; i++){
+            if(equationOfCircle(infoOfBodies[i].x,infoOfBodies[i].y,newX,newY,infoOfBodies[i].radius) < 0)
+                printf("%d ",i);
+        } 
+     }           
+}
+
+
 void buttonHandler(int buttonClick,int state,int x,int y){
     extern Button button;
     if(state == GLUT_DOWN && buttonClick == GLUT_LEFT_BUTTON){
@@ -36,6 +74,8 @@ void buttonHandler(int buttonClick,int state,int x,int y){
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             gluOrtho2D(-glutGet(GLUT_WINDOW_WIDTH)/2, glutGet(GLUT_WINDOW_WIDTH)/2, -glutGet(GLUT_WINDOW_HEIGHT)/2, glutGet(GLUT_WINDOW_HEIGHT)/2);
+            glutKeyboardFunc(changeViewNumber);
+            glutMouseFunc(handleCelestialBodiesClick);
             displaySolarSystem();    
         }
     }
@@ -51,10 +91,10 @@ void display(){
     glFlush();   
 }
 
-void idle(void){   
-    if(viewNumber > 1){  
+void idle(){   
+     if(viewNumber % 2 == 0){  
         display();
-    }
+     }
 }
 void init(int *argc,char **argv){
     glutInit(argc,argv);
