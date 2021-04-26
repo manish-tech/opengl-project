@@ -1,0 +1,1 @@
+void displayInformation(void);

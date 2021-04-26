@@ -67,5 +67,4 @@ void displayIntro()
     //draw button
     drawButton();
     glutSwapBuffers();
-
 }
