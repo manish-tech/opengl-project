@@ -26,6 +26,7 @@ void displayIntro()
     char title[] = "SOLAR  SYSTEM";
     char usn[2][11] = {"4NM18CS090", "4NM18CS091"};
     char name[2][50] = {"MANISH J BANGERA", "MANISH R BEKAL"};
+    char submittedTo[] = {"\n Submitted To,\n\n Mr. Pradeep Kanchan \n Asst Prof Gd III, Dept of CSE, NMAMIT"};
 
     //draw points
     glColor4f(1.0, 1.0, 1.0, 1.0);
@@ -64,6 +65,8 @@ void displayIntro()
         xCoordinate = initialXCoordinate;
     }
 
+    glColor4f(1, 1, 1, 1);
+    drawText(xCoordinate,yCoordinate,submittedTo,GLUT_BITMAP_TIMES_ROMAN_24);
     //draw button
     drawButton();
     glutSwapBuffers();

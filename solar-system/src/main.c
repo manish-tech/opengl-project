@@ -6,6 +6,8 @@
 #include"./lib/mytypes.h"
 #include "./lib/displaySolarSystem.h"
 #include<string.h>
+#include<unistd.h>
+#include <signal.h>
 //#include "./lib/displayBodiesInformation.h"
 
 int viewNumber = 1;
@@ -48,6 +50,11 @@ char* getCelestialBodyName(int celestialBodyNumber){
         case 9:
             return "Sun";
             break;
+        case 10:
+            return "Comet";
+            break;
+        case 11:
+            return "Asteroid";
         default:
             return "";
             break;
@@ -81,15 +88,15 @@ void displayInformation(){
             break;
         case 3:
             height = height*0.75;
-            drawJupitor(x,height,celestialBodiesRadius[3]);
+            drawMars(x,height,celestialBodiesRadius[3]);
             break;
         case 4:
             height = height*0.75;
-            drawSaturn(x,height,celestialBodiesRadius[4]);
+            drawJupitor(x,height,celestialBodiesRadius[4]);
             break;
         case 5:
             height = height*0.8;
-            drawUranus(x,height,celestialBodiesRadius[5]);
+            drawSaturn(x,height,celestialBodiesRadius[5]);
             break;
         case 6:
             height = height*0.8;
@@ -97,15 +104,34 @@ void displayInformation(){
             break;
         case 7:
             height = height*0.8;
-            drawUranus(x,height,celestialBodiesRadius[7]);
+            drawNeptune(x,height,celestialBodiesRadius[7]);
             break;
         case 8:
             height = height*0.8;
-            drawUranus(x,height,celestialBodiesRadius[8]);
+            drawPluto(x,height,celestialBodiesRadius[8]);
             break;
         case 9:
             height = height*0.72;
             drawSun(x,height,celestialBodiesRadius[9]);
+            break;
+        case 10:
+            height = height*0.85;
+            glColor4f(0.8f, 0.8f, 0.8f, 1.0f);
+            int r = 25;
+            for(int i = 0 ;i < 60 ;i=i+3){
+                 r -= 1;
+                drawFilledCircle(x-10 + i,height,r);
+            }
+            break;
+        case 11 : 
+            height = height*0.85;
+            glColor4f(0.8f, 0.8f, 0.8f, 1.0f);
+
+            for(int i = 0 ;i < 600 ;i=i+40){
+                r = rand()%15 + 5;
+                drawFilledCircle(x-250 + i,height,r);
+            }
+
             break;
         default:
             break;
@@ -120,12 +146,18 @@ void displayInformation(){
         fileName[i] = bodyName[i];
     fileName[i] = '\0'; 
     filePointer = fopen(strcat(path,strcat(fileName,".txt")),"r");
-    height = height - 1.6*celestialBodiesRadius[celestialBodyNumber];
+    if(celestialBodyNumber < 10)
+        height = height - 1.6*celestialBodiesRadius[celestialBodyNumber];
+    if(celestialBodyNumber == 10)
+        height = height - 60;
+    if(celestialBodyNumber == 11)
+        height = height - 60;
     if(filePointer == NULL){
         printf("file not found ..  \n");
     }
     else{    
         while(fgets(data,150,filePointer) != NULL){
+            glColor3f(1.0,1.0,1.0);
             drawText(width*0.05,height,data,GLUT_BITMAP_HELVETICA_18);
             height -= 30; 
         }
@@ -156,10 +188,15 @@ void setView(int w,int h){
         glOrtho(0, w, 0, h,0,1000);
     }
 }
-
+extern int gpid;
 void changePauseCounter(unsigned char key,int x,int y){
+   
     if(key == 'p')
         pauseCounter++;
+    if(pauseCounter % 2 != 0)
+        system("pkill mplayer");
+    else if(pauseCounter % 2 == 0)
+        playMusic();
 }
 
 void closeSecondWindow(unsigned char key,int x,int y){
@@ -176,6 +213,7 @@ void handleCelestialBodiesClick(int buttonClick,int state,int x,int y){
     int width = glutGet(GLUT_WINDOW_WIDTH)/2;
     int height = glutGet(GLUT_WINDOW_HEIGHT)/2;
     extern Celestialbodies *infoOfBodies;
+    extern Celestialbodies *infoOfCommet;
      if(state == GLUT_DOWN && buttonClick == GLUT_LEFT_BUTTON){
         int newX = 0,newY = 0;
         if(width - x > 0)
@@ -195,21 +233,50 @@ void handleCelestialBodiesClick(int buttonClick,int state,int x,int y){
         else if(height - y == 0)
             newY = 0;
 
+           
+       
         for(int i = 0 ; i < 10 ; i++){
             if(equationOfCircle(infoOfBodies[i].x,infoOfBodies[i].y,newX,newY,infoOfBodies[i].radius) < 0){
                 glutInitDisplayMode(GLUT_RGB);
                 glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH),glutGet(GLUT_SCREEN_HEIGHT));
                 glutInitWindowPosition(0,0);
-                secondWindow =  glutCreateWindow("planets Info");
+                secondWindow =  glutCreateWindow("solar system Info");
                 glutKeyboardFunc(closeSecondWindow);
                 glutReshapeFunc(setView);
                 glutDisplayFunc(displayInformation);
                 viewNumber++;
                 celestialBodyNumber = i;
-            }
-                
+                return;
+            }         
+        }
+      
+        extern int r1,r2;
+        if(((equationOfCircle(0,0,newX,newY,r2) < 0) && (equationOfCircle(0,0,newX,newY,r1)>0))){
+            glutInitDisplayMode(GLUT_RGB);
+            glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH),glutGet(GLUT_SCREEN_HEIGHT));
+            glutInitWindowPosition(0,0);
+            secondWindow =  glutCreateWindow("solar system Info");
+            glutKeyboardFunc(closeSecondWindow);
+            glutReshapeFunc(setView);
+            glutDisplayFunc(displayInformation);
+            viewNumber++;
+            celestialBodyNumber = 11;
+            return;    
+        }
+       
+        if((equationOfCircle(infoOfCommet[0].x,infoOfCommet[0].y,newX,newY,8) <= 0) || (equationOfCircle(infoOfCommet[1].x,infoOfCommet[1].y,newX,newY,6) <=0)){
+            glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH),glutGet(GLUT_SCREEN_HEIGHT));
+            glutInitWindowPosition(0,0);
+            secondWindow =  glutCreateWindow("solar system Info");
+            glutKeyboardFunc(closeSecondWindow);
+            glutReshapeFunc(setView);
+            glutDisplayFunc(displayInformation);
+            viewNumber++;
+            celestialBodyNumber = 10;
+            return;
         } 
-     }           
+
+     }         
 }
 
 
@@ -240,10 +307,14 @@ void display(){
     glFlush();   
 }
 
+
 void idle(){   
+    
      if(pauseCounter % 2 == 0){  
         display();
      }
+     
+
 }
 void init(int *argc,char **argv){
     glutInit(argc,argv);
@@ -258,6 +329,7 @@ void init(int *argc,char **argv){
 }
 
 int main(int argc,char **argv){
+    
     init(&argc,argv);
     glutMainLoop();
     

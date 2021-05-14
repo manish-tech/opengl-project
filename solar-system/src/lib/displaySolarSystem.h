@@ -10,3 +10,5 @@ void drawUranus(GLfloat x, GLfloat y, GLfloat radius);
 void drawNeptune(GLfloat x, GLfloat y, GLfloat radius);
 void drawPluto(GLfloat x, GLfloat y, GLfloat radius);
 void drawSun(GLfloat x, GLfloat y, GLfloat radius);
+void drawFilledCircle(GLfloat x, GLfloat y, GLfloat radius);
+int playMusic();
